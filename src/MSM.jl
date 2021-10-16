@@ -21,7 +21,7 @@ julia> simulate(m, nsims = 10000)
 """
 module MSM
 
-export fit!, fitglobal!, predict, simulate, tune
+export MSMmodel, fit!, fitglobal!, predict, simulate, tune
 
 using Parameters, DataFrames, Statistics, Random, Optim, Kronecker, LinearAlgebra, Distributions, BlackBoxOptim
 
