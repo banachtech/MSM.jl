@@ -142,33 +142,33 @@ function nll(p::Vector{<:Real}, k::Integer, M::Vector{Int}, A::Matrix{Float64}, 
 end
 
 """
-    predict(model::MSMmodel; window=100, nsamples=100)
+    predict(model::MSMmodel, paths, pathlen)
 
-Predict volatility implied by an MSM model through simulation. Window is the length of observations over which volatility (standard deviation) is computed and nsamples is the number of such windows simulated. Returns a vector of length nsamples containing volatilities.
+Predict volatility implied by an MSM model through simulation. `pathlen` is the length of observations over which volatility (standard deviation) is computed and `paths` is the number of paths simulated. Returns a vector of length nsamples containing volatilities.
 """
-function predict(model::MSMmodel; window = 100, nsamples = 100)
-    s = fill(0.0, nsamples)
-    @inbounds for i = 1:nsamples
-        r = simulate(model, nsims = window)
+function predict(model::MSMmodel, paths, pathlen)
+    s = fill(0.0, paths)
+    @inbounds for i = 1:paths
+        r = simulate(model, pathlen)
         s[i] = std(r)
     end
     return s
 end
 
 """
-    simulate(model::MSMmodel; nsims=1000)
+    simulate(model::MSMmodel, pathlen)
 
-Simulate an MSM model's trajectory of length nsims. Returns a vector.
+Simulate an MSM model's trajectory of length pathlen. Returns a vector.
 """
-function simulate(model::MSMmodel; nsims = 1000)
+function simulate(model::MSMmodel, pathlen)
     @unpack k, b, m₀, γₖ, σ₀ = model
     A = Φ(b, γₖ, k)
     M = sum.([digits(q, base = 2, pad = k) for q = 0:2^k-1])
     N = length(M)
     u = rand(Categorical(N))
-    r = Vector{Float64}(undef, nsims)
+    r = Vector{Float64}(undef, pathlen)
     r[1] = Σ(σ₀, m₀, k, M[u]) * randn()
-    @inbounds for j = 2:nsims
+    @inbounds for j = 2:pathlen
         u = rand(Categorical(A[u, :]))
         r[j] = Σ(σ₀, m₀, k, M[u]) * randn()
     end
