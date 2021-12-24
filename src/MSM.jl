@@ -95,7 +95,7 @@ function fit!(model::MSMmodel, x::Vector{Float64}; time_limit = 60.0, solver = N
 end
 
 """
-    fitglobal!(model::MSMmodel, x::Vector{Float64}; method = :adaptive_de_rand_1_bin_radiuslimited,  maxsteps = 10000, tracemode = :verbose)
+    fitglobal!(model::MSMmodel, x::Vector{Float64}; method = :adaptive_de_rand_1_bin_radiuslimited,  maxsteps = 10000, tracemode = :silent)
 
 Fit MSM model to a vector of real-valued, de-meaned data using BlackBoxOptim's global optimization methods. Recommended method is the default method.
 
@@ -107,7 +107,7 @@ julia> m = MSMmodel(); fitglobal!(m, x)
 
 tracemode = :silent suppresses optimizer trace messages.
 """
-function fitglobal!(model::MSMmodel, x::Vector{Float64}; method = :adaptive_de_rand_1_bin_radiuslimited, maxsteps = 10000, tracemode = :verbose)
+function fitglobal!(model::MSMmodel, x::Vector{Float64}; method = :adaptive_de_rand_1_bin_radiuslimited, maxsteps = 10000, tracemode = :silent)
     @unpack k, b, m₀, γₖ, σ₀ = model
     l = [1.001, 1.001, 0.001, 0.0001]
     h = [50.0, 1.999, 0.999, 5.0]
